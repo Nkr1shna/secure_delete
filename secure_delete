@@ -1,0 +1,27 @@
+#!/bin/bash
+
+## Set login wallpaper
+
+# strip new line char passed by Nautilus
+FILENAME=$(echo $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS | sed -e 's/\r//g')
+
+# Must run as sudo
+if [ "$EUID" -ne 0 ] ; then
+
+    # Get sudo password
+    PASSWORD=$(zenity --password --title="Secure Delete" --timeout=20)
+
+    if [ -d "${FILENAME}" ] ; then
+        echo $PASSWORD | sudo -S rm -r echo $FILENAME
+    else
+        if [ -f "${FILENAME}" ]; then
+            echo $PASSWORD | sudo -S rm echo $FILENAME
+        else
+            zenity --error --text "${FILENAME} is not a file!";
+            exit 2
+        fi
+    fi
+
+fi
+
+exit 0
